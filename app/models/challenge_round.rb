@@ -4,7 +4,8 @@ class ChallengeRound < ApplicationRecord
   belongs_to :challenge, inverse_of: :challenge_rounds
   has_many :submissions,
            dependent: :restrict_with_error
-  has_many :leaderboards
+  has_many :base_leaderboards, class_name: 'BaseLeaderboard'
+  has_many :leaderboards, -> { leaderboards.order(seq: :asc) }, class_name: 'BaseLeaderboard'
   after_initialize :defaults,
                    unless: :persisted?
 

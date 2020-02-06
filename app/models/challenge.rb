@@ -30,8 +30,8 @@ class Challenge < ApplicationRecord
   has_many :challenge_participants, dependent: :destroy
 
   has_many :submissions, dependent: :destroy
-  has_many :leaderboards,
-           class_name: 'Leaderboard'
+  has_many :base_leaderboards, class_name: 'BaseLeaderboard'
+  has_many :leaderboards, -> { leaderboards.order(seq: :asc) }, class_name: 'BaseLeaderboard'
   has_many :ongoing_leaderboards,
            class_name: 'OngoingLeaderboard'
   has_many :participant_challenges,

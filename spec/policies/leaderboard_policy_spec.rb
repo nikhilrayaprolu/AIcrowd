@@ -3,7 +3,7 @@ require 'rails_helper'
 describe LeaderboardPolicy do
   subject { described_class.new(participant, leaderboard_row) }
 
-  let(:leaderboard_row) { Leaderboard.first }
+  let(:leaderboard_row) { BaseLeaderboard.first }
 
   context 'leaderboard visible' do
     let!(:challenge) { create(:challenge, :running) }
@@ -25,11 +25,11 @@ describe LeaderboardPolicy do
 
       it { is_expected.to permit_action(:index) }
 
-      it {
-        expect(Pundit.policy_scope(participant, Leaderboard)
+      it 'test', focus: true do
+        expect(Pundit.policy_scope(participant, BaseLeaderboard.leaderboards)
         .pluck(:submitter_type, :submitter_id))
         .to eq(Leaderboard.all.pluck(:submitter_type, :submitter_id))
-      }
+      end
     end
 
     context 'for a participant' do
@@ -38,9 +38,9 @@ describe LeaderboardPolicy do
       it { is_expected.to permit_action(:index) }
 
       it {
-        expect(Pundit.policy_scope(participant, Leaderboard)
+        expect(Pundit.policy_scope(participant, BaseLeaderboard.leaderboards)
         .pluck(:submitter_type, :submitter_id))
-        .to eq(Leaderboard.all.pluck(:submitter_type, :submitter_id))
+        .to eq(BaseLeaderboard.leaderboards.pluck(:submitter_type, :submitter_id))
       }
     end
 
@@ -50,9 +50,9 @@ describe LeaderboardPolicy do
       it { is_expected.to permit_action(:index) }
 
       it {
-        expect(Pundit.policy_scope(participant, Leaderboard)
+        expect(Pundit.policy_scope(participant, BaseLeaderboard.leaderboards)
         .pluck(:submitter_type, :submitter_id))
-        .to eq(Leaderboard.all.pluck(:submitter_type, :submitter_id))
+        .to eq(BaseLeaderboard.leaderboards.pluck(:submitter_type, :submitter_id))
       }
     end
 
@@ -62,9 +62,9 @@ describe LeaderboardPolicy do
       it { is_expected.to permit_action(:index) }
 
       it {
-        expect(Pundit.policy_scope(participant, Leaderboard)
+        expect(Pundit.policy_scope(participant, BaseLeaderboard.leaderboards)
         .pluck(:submitter_type, :submitter_id))
-        .to eq(Leaderboard.all.pluck(:submitter_type, :submitter_id))
+        .to eq(BaseLeaderboard.leaderboards.pluck(:submitter_type, :submitter_id))
       }
     end
 
@@ -77,9 +77,9 @@ describe LeaderboardPolicy do
       it { is_expected.to permit_action(:index) }
 
       it {
-        expect(Pundit.policy_scope(participant, Leaderboard)
+        expect(Pundit.policy_scope(participant, BaseLeaderboard.leaderboards)
         .pluck(:submitter_type, :submitter_id))
-        .to eq(Leaderboard.all.pluck(:submitter_type, :submitter_id))
+        .to eq(BaseLeaderboard.leaderboards.pluck(:submitter_type, :submitter_id))
       }
     end
   end

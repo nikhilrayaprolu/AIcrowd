@@ -43,7 +43,7 @@ class LeaderboardPolicy < ApplicationPolicy
       <<~SQL
         (submitter_type = 'Participant' AND submitter_id = #{participant_id})
         #{team_check}
-        OR leaderboards.challenge_id IN
+        OR base_leaderboards.challenge_id IN
           (SELECT c.id
             FROM challenges c
             WHERE c.show_leaderboard IS TRUE

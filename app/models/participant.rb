@@ -31,6 +31,7 @@ class Participant < ApplicationRecord
   after_create :set_email_preferences
   after_save :publish_to_prometheus
   after_commit :upsert_discourse_user, on: [:create, :update]
+  after_commit :update_gitlab_user, on: [:update]
 
   mount_uploader :image_file, ImageUploader
   validates :image_file, file_size: { less_than: 5.megabytes }
@@ -50,6 +51,9 @@ class Participant < ApplicationRecord
   scope :admins, -> { where(admin: true) }
   scope :with_every_email_preference, -> { joins(:email_preferences).where(email_preferences: { email_frequency_cd: :every }) }
 
+  belongs_to :referred_by, class_name: 'Participant', optional: true
+
+  has_many :referrals, class_name: 'Participant', foreign_key: :referred_by_id, dependent: :nullify
   has_many :aicrowd_user_badges, dependent: :destroy
   has_many :participant_organizers, dependent: :destroy
   has_many :organizers, through: :participant_organizers
@@ -105,6 +109,8 @@ class Participant < ApplicationRecord
   has_many :newsletter_emails, class_name: 'NewsletterEmail', dependent: :destroy
   has_many :notifications, dependent: :destroy
   has_many :team_members, dependent: :destroy
+  has_many :participant_ml_challenge_goals
+  has_many :ml_activity_points
 
   validates :email,
             presence:              true,
@@ -136,6 +142,7 @@ class Participant < ApplicationRecord
   validates :last_name,
             length:      { in: 2...100 },
             allow_blank: true
+  validates :uuid, uniqueness: true
 
   after_update do
     ParticipantBadgeJob.perform_later(name: "profileupdate", participant_id: id)
@@ -377,5 +384,12 @@ class Participant < ApplicationRecord
     return unless saved_change_to_attribute?(:name) || saved_change_to_attribute?(:email)
 
     Discourse::UpsertUserJob.perform_later(self.id)
+  end
+
+  def update_gitlab_user
+    return if Rails.env.development? || Rails.env.test?
+    return unless saved_change_to_attribute?(:name)
+
+    Gitlab::UpdateUsernameJob.perform_later(self.id)
   end
 end

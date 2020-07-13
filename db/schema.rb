@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_30_120822) do
+ActiveRecord::Schema.define(version: 2020_07_17_081421) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -51,6 +51,14 @@ ActiveRecord::Schema.define(version: 2020_06_30_120822) do
     t.string "checksum", null: false
     t.datetime "created_at", null: false
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "activity_points", force: :cascade do |t|
+    t.string "activity_key", null: false
+    t.string "description"
+    t.integer "point", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "ahoy_events", force: :cascade do |t|
@@ -345,6 +353,7 @@ ActiveRecord::Schema.define(version: 2020_06_30_120822) do
     t.integer "problem_id"
     t.float "weight"
     t.integer "challenge_round_id"
+    t.integer "occur_day"
   end
 
   create_table "challenge_rounds", force: :cascade do |t|
@@ -480,6 +489,7 @@ ActiveRecord::Schema.define(version: 2020_06_30_120822) do
     t.string "banner_mobile_file"
     t.float "weight", default: 0.0, null: false
     t.boolean "editors_selection", default: false, null: false
+    t.boolean "ml_challenge", default: false, null: false
     t.index ["clef_task_id"], name: "index_challenges_on_clef_task_id"
     t.index ["slug"], name: "index_challenges_on_slug", unique: true
   end
@@ -512,6 +522,14 @@ ActiveRecord::Schema.define(version: 2020_06_30_120822) do
     t.string "eua_file"
     t.boolean "use_challenge_dataset_files", default: false, null: false
     t.index ["organizer_id"], name: "index_clef_tasks_on_organizer_id"
+  end
+
+  create_table "daily_practice_goals", force: :cascade do |t|
+    t.string "title"
+    t.integer "points"
+    t.string "duration_text"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "dataset_file_downloads", id: :serial, force: :cascade do |t|
@@ -710,6 +728,15 @@ ActiveRecord::Schema.define(version: 2020_06_30_120822) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "ml_activity_points", force: :cascade do |t|
+    t.integer "participant_id"
+    t.integer "challenge_id"
+    t.integer "activity_point_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "point", default: 0, null: false
+  end
+
   create_table "newsletter_emails", force: :cascade do |t|
     t.text "bcc", default: "", null: false
     t.text "cc", default: "", null: false
@@ -823,6 +850,14 @@ ActiveRecord::Schema.define(version: 2020_06_30_120822) do
     t.index ["participant_id"], name: "index_participant_clef_tasks_on_participant_id"
   end
 
+  create_table "participant_ml_challenge_goals", force: :cascade do |t|
+    t.integer "participant_id"
+    t.integer "challenge_id"
+    t.integer "daily_practice_goal_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "participant_organizers", force: :cascade do |t|
     t.bigint "participant_id"
     t.bigint "organizer_id"
@@ -886,11 +921,15 @@ ActiveRecord::Schema.define(version: 2020_06_30_120822) do
     t.integer "ranking_change", default: 0, null: false
     t.boolean "agreed_to_organizers_newsletter", default: true, null: false
     t.float "fixed_rating"
+    t.bigint "gitlab_id"
+    t.uuid "uuid", default: -> { "gen_random_uuid()" }, null: false
+    t.bigint "referred_by_id"
     t.index ["confirmation_token"], name: "index_participants_on_confirmation_token", unique: true
     t.index ["email"], name: "index_participants_on_email", unique: true
     t.index ["reset_password_token"], name: "index_participants_on_reset_password_token", unique: true
     t.index ["slug"], name: "index_participants_on_slug", unique: true
     t.index ["unlock_token"], name: "index_participants_on_unlock_token", unique: true
+    t.index ["uuid"], name: "index_participants_on_uuid", unique: true
   end
 
   create_table "participation_terms", force: :cascade do |t|
@@ -1155,6 +1194,9 @@ ActiveRecord::Schema.define(version: 2020_06_30_120822) do
   add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
   add_foreign_key "participant_clef_tasks", "clef_tasks"
   add_foreign_key "participant_clef_tasks", "participants"
+  add_foreign_key "participant_ml_challenge_goals", "challenges"
+  add_foreign_key "participant_ml_challenge_goals", "daily_practice_goals"
+  add_foreign_key "participant_ml_challenge_goals", "participants"
   add_foreign_key "participant_organizers", "organizers"
   add_foreign_key "participant_organizers", "participants"
   add_foreign_key "partners", "organizers"

@@ -13906,6 +13906,12 @@ html {
 .country-flag, .organizer-icon-small {
   width: 24px;
 }
+.country-flag-large {
+  width: 192px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
 
 .cursor-pointer {
   cursor: pointer;

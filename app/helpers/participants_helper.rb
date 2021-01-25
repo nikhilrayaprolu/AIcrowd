@@ -61,4 +61,28 @@ module ParticipantsHelper
 
     participant.ml_activity_points.group_by_day(:created_at, format: "%Y-%m-%d").sum_points_by_day
   end
+
+  def social_share_badge(site, badge, text=nil)
+    title = text.presence || badge.aicrowd_badge['description']
+    data_img_and_url = data_image_and_url_badge(badge)
+    content_tag(:span,
+                data: {
+                    title: title,
+                    desc:  badge.aicrowd_badge['description'],
+                    img:   data_img_and_url[:img],
+                    url:   "#{data_img_and_url[:url]}?utm_source=AIcrowd&utm_medium=#{site.humanize}",
+                    href:  "#{data_img_and_url[:url]}?utm_source=AIcrowd&utm_medium=#{site.humanize}"
+                }) do
+      social_share_link(site, data_img_and_url[:url]) do
+        image_tag(social_image_path(site))
+      end
+    end
+  end
+
+  def data_image_and_url_badge(badge)
+    data_img_and_url = {}
+    data_img_and_url.merge!(img: "https://www.aicrowd.com/assets/awards/award-#{badge.aicrowd_badge.badge_type&.name&.downcase}.svg")
+    data_img_and_url.merge!(url: "#{participant_url(badge.participant_id)}?badge=#{badge.id}")
+    data_img_and_url
+  end
 end

@@ -9,7 +9,7 @@ class NotificationService
   end
 
   def call
-    send(@notification_type) if ['graded', 'failed', 'leaderboard'].include?(@notification_type)
+    send(@notification_type) if ['graded', 'failed', 'leaderboard', 'badge'].include?(@notification_type)
   end
 
   private
@@ -34,6 +34,26 @@ class NotificationService
         notification_url:  link,
         challenge_id:      @notifiable.challenge.id,
         is_new:            true)
+  end
+
+  def badge
+    message = "#{@notifiable.aicrowd_badge['description']} You are Awarded #{@notifiable.aicrowd_badge['name']} Badge."
+    thumb   = "/assets/awards/award-<%= badge.aicrowd_badge.badge_type&.name&.downcase %>.svg"
+    link    = "#{participant_url(@notifiable.participant.name)}?badge=#{@notifiable.id}"
+
+    existing_notification = @participant.notifications.where(notifiable: @notifiable).first
+
+    return if existing_notification.present?
+
+    Notification
+        .create!(
+            participant:       @participant,
+            notifiable:        @notifiable,
+            notification_type: @notification_type,
+            message:           message,
+            thumbnail_url:     thumb,
+            notification_url:  link,
+            is_new:            true)
   end
 
   def failed

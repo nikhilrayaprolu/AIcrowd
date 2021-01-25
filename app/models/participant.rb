@@ -193,7 +193,8 @@ class Participant < ApplicationRecord
   end
   def add_badge(name, custom_fields={})
     badge_id = AicrowdBadge.find_by(name: name).id
-    AicrowdUserBadge.create!(aicrowd_badge_id: badge_id, participant_id: id, custom_fields: custom_fields)
+    user_badge = AicrowdUserBadge.create!(aicrowd_badge_id: badge_id, participant_id: id, custom_fields: custom_fields)
+    Notification::BadgesNotificationJob.perform_now(user_badge.id)
   end
 
   def rm_badge(name)

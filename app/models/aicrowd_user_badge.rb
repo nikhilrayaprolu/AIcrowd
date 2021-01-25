@@ -7,4 +7,5 @@ class AicrowdUserBadge < ApplicationRecord
   scope :select_display_fields, -> { select("ab.name, ab.created_at") }
   scope :individual_badges, -> (badge_type){ with_badge_meta.filter_by_badge_type(badge_type) }
   scope :badges_stat_count, -> { with_badge_meta.joins('left outer join badge_types bt on bt.id=ab.badge_type_id').group('ab.badge_type_id').count }
+
 end

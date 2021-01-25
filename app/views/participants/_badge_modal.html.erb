@@ -1,0 +1,27 @@
+<% if params[:badge] %>
+  <% user_badge = AicrowdUserBadge.find(params[:badge]) %>
+  <div class="modal fade badgemodal" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel"><%= user_badge.aicrowd_badge['name'] %></h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <img src="/assets/awards/award-<%= user_badge.aicrowd_badge.badge_type&.name&.downcase %>.svg" class="country-flag-large" />
+        <div class="modal-body">
+           <%= user_badge.aicrowd_badge['description'] %> You are Awarded <%= user_badge.aicrowd_badge['name'] %> Badge.
+        </div>
+        <div class="modal-footer">
+          <%= social_share_badge('twitter', user_badge) %>
+          <%= social_share_badge('facebook', user_badge) %>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+      $('.badgemodal').modal('show');
+  </script>
+<% end %>

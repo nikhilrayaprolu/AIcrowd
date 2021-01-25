@@ -30,8 +30,6 @@
             <% end %>
           </div>
         </div>
-
-
       <% end %>
     </div>
   </div>
@@ -55,7 +53,7 @@
             </div>
             <span class="description">
               <%= badge.aicrowd_badge['description'] %> <br />
-              <% badge.custom_fields.each do |key,value| %>
+              <% badge.custom_fields&.each do |key,value| %>
                 <% if key == 'challenge_round' %>
                   <% challenge = ChallengeRound.find_by(id: value).challenge %>
                   <%= link_to "Challenge: #{challenge.challenge}", challenge_path(challenge), class: 'red-link' %>

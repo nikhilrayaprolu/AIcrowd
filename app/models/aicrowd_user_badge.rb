@@ -8,4 +8,7 @@ class AicrowdUserBadge < ApplicationRecord
   scope :individual_badges, -> (badge_type){ with_badge_meta.filter_by_badge_type(badge_type) }
   scope :badges_stat_count, -> { with_badge_meta.joins('left outer join badge_types bt on bt.id=ab.badge_type_id').group('ab.badge_type_id').count }
 
+  def badge_image_url
+    ActionController::Base.helpers.image_path("/assets/awards/award-#{aicrowd_badge.badge_type&.name&.downcase}.svg")
+  end
 end

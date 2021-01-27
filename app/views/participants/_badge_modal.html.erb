@@ -9,7 +9,7 @@
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <img src="/assets/awards/award-<%= user_badge.aicrowd_badge.badge_type&.name&.downcase %>.svg" class="country-flag-large" />
+        <img src="<%= user_badge.badge_image_url %>" class="country-flag-large mt-3" />
         <div class="modal-body">
            <%= user_badge.aicrowd_badge['description'] %> You are Awarded <%= user_badge.aicrowd_badge['name'] %> Badge.
         </div>

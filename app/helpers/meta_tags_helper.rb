@@ -32,9 +32,6 @@ module MetaTagsHelper
     end
     content_for?(:meta_description) ? content_for(:meta_description) : DEFAULT_META["meta_description"]
   end
-  def badge_url(badge)
-    "#{ENV['DOMAIN_NAME']}/assets/awards/award-#{badge.aicrowd_badge.badge_type&.name&.downcase}.svg"
-  end
 
   def meta_image
     if show_action?
@@ -45,7 +42,7 @@ module MetaTagsHelper
       elsif controller_name == 'organizers' && @organizer.image_file?
         @organizer.image_file.url
       elsif controller_name == 'participants' && params[:badge]
-        badge_url(AicrowdUserBadge.find(params[:badge]))
+        AicrowdUserBadge.find(params[:badge]).badge_image_url
       elsif controller_name == 'participants' && @participant.image_file?
         @participant.image_file.url
       end

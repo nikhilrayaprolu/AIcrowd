@@ -38,8 +38,8 @@ class NotificationService
 
   def badge
     message = "#{@notifiable.aicrowd_badge['description']} You are Awarded #{@notifiable.aicrowd_badge['name']} Badge."
-    thumb   = "/assets/awards/award-#{@notifiable.aicrowd_badge.badge_type&.name&.downcase}.svg"
-    link    = "#{participant_url(@notifiable.participant.name)}?badge=#{@notifiable.id}"
+    thumb   = @notifiable.badge_image_url
+    link    = participant_url(@notifiable.participant, badge: @notifiable)
 
     existing_notification = @participant.notifications.where(notifiable: @notifiable).first
 
